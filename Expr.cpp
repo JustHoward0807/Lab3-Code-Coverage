@@ -232,8 +232,11 @@ TEST_CASE("Test for expression") {
     Multi *mav3 = new Multi(new Num(6), new Add(new Num(6), new Variable("World")));
     SECTION("Equals") {
         CHECK((new Num(1))->equals(new Num(1)) == true);
+        CHECK((new Num(1))->equals(new Variable("x")) == false);
         CHECK((new Variable("x"))->equals(new Variable("y")) == false);
+        CHECK((new Variable("x"))->equals(new Num(1)) == false);
         CHECK((new Add(new Num(2), new Num(3)))->equals(new Add(new Num(2), new Num(3))) == true);
+        CHECK((new Add(new Num(2), new Num(3)))->equals(new Multi(new Num(2), new Num(3))) == false);
         CHECK((new Add(new Num(2), new Num(3)))->equals(new Add(new Num(3), new Num(2))) == false);
         CHECK((new Multi(new Num(2), new Num(2)))->equals(new Add(new Num(1), new Num(2))) == false);
     }
@@ -275,6 +278,10 @@ TEST_CASE("Test for expression") {
         //(10*10) * (30+15)
         CHECK((new Multi(new Multi(new Num(10), new Num(10)), new Add(new Num(30), new Num(15))))->interp() == 4500);
 
+                
+    
+        CHECK_THROWS((new Variable("x"))->interp());
+        
         // (10 + 10) + (20+ 20) * (30 + 30) + (40 * 40)
         CHECK((new Multi(
                 new Add(
@@ -329,6 +336,10 @@ TEST_CASE("Test for expression") {
                        ->subst("x", new Add(new Variable("y"),new Num(7)))
                        ->equals(new Add(new Variable("y"),new Num(7))) );
 
+        CHECK( (new Variable("x"))
+                       ->subst("notMatch", new Variable("y"))
+                       ->equals(new Variable("x")) );
+        
         CHECK( (new Add((new Multi(new Num(10), new Variable("x"))), new Num (7))) -> subst("x", new Variable("y"))
                        -> equals((new Add((new Multi(new Num(10), new Variable("y"))), new Num (7)))) );
     }
