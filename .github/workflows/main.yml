@@ -7,5 +7,7 @@ jobs:
     steps:
       - name: Checkout v1
         uses: actions/checkout@v1
-      - name: Run test
+      - name: Run make
         run: make
+      - name: Run msdscipt
+        run: ./msdscript --test
